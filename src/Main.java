@@ -30,9 +30,14 @@ class ChessFrame extends JFrame {
         add(statusBar, BorderLayout.SOUTH);
 
         // Atualiza a barra de status com base no turno atual (Brancas/Negras)
-        boardPanel.setStatusListener(turn -> statusBar.setText(
-                "Vez: " + (turn == PieceColor.WHITE ? "Brancas" : "Negras")
-        ));
+        boardPanel.setStatusListener(turn -> {
+            if (turn == null) {
+                statusBar.setText("IA: Pensando...");
+            } else {
+                statusBar.setText("Vez: " + (turn == PieceColor.WHITE ? "Brancas" : "Negras"));
+            }
+        });
+
         // Texto inicial da barra
         statusBar.setText("Vez: " +
                 (boardPanel.getTurn() == PieceColor.WHITE ? "Brancas" : "Negras"));
@@ -225,6 +230,11 @@ class BoardPanel extends JPanel implements MouseListener {
         turn = turn.opposite();
         statusListener.accept(turn);
 
+        // Se for vez da IA (pretas), chama a função da IA
+        if (turn == PieceColor.BLACK) {
+            AiMove();
+        }
+
         // Verifica xeque-mate
         if (isCheckmate(turn)) {
             String msg = (turn == PieceColor.WHITE ? "Pretas" : "Brancas") +
@@ -233,6 +243,39 @@ class BoardPanel extends JPanel implements MouseListener {
                     JOptionPane.INFORMATION_MESSAGE);
         }
     }
+    private void AiMove() {
+        ChessAI ai = new ChessAI();
+        // Mostra "IA: Pensando..." na barra
+        statusListener.accept(null);
+
+        new javax.swing.SwingWorker<Move, Void>() {
+            @Override
+            protected Move doInBackground() {
+                // Delay artificial de 1.5 segundos
+                try {
+                    Thread.sleep(1500); // 1500ms = 1,5 segundos
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                return ai.getBestMove(board, PieceColor.BLACK, BoardPanel.this);
+            }
+
+            @Override
+            protected void done() {
+                try {
+                    Move best = get();
+                    if (best != null) {
+                        move(best.fromR, best.fromC, best.toR, best.toC);
+                        repaint();
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }.execute();
+    }
+
+
 
     // Recalcula os movimentos legais da peça selecionada
     private void recomputeLegalMoves() {
@@ -300,7 +343,7 @@ class BoardPanel extends JPanel implements MouseListener {
     }
 
     // Computa movimentos legais válidos de (r,c) sem alterar seleção
-    private List<Point> computeLegalMoves(int r, int c) {
+    public List<Point> computeLegalMoves(int r, int c) {
         List<Point> moves = new ArrayList<>();
         Piece piece = board[r][c];
         if (piece == null) return moves;
