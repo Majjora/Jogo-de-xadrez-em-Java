@@ -1,7 +1,7 @@
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Random;
-import java.awt.Point;
+import java.util.List;  // Para usar listas genéricas (List)
+import java.util.ArrayList;  // Implementação concreta de listas (ArrayList)
+import java.util.Random; // Para gerar números aleatórios (IA, movimentos aleatórios)
+import java.awt.Point; // Representa coordenadas (x, y) no tabuleiro
 
 public class ChessAI {
     private final Random random = new Random();

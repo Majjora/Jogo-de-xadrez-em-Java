@@ -1,9 +1,9 @@
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
-import java.util.List;
-import java.util.ArrayList;
+import javax.swing.*; // Para criar a interface gráfica (JFrame, JPanel, JLabel, etc.)
+import java.awt.*; // Para gráficos, cores, dimensões e fontes
+import java.awt.event.*; // Para capturar eventos do mouse e teclado
+import java.util.*; // Importa utilitários gerais (ex.: Collections, Random, List)
+import java.util.List;   // Interface de listas genéricas
+import java.util.ArrayList; // Implementação concreta de listas (ArrayList)
 
 // Inicialização do jogo
 public class Main {
